@@ -1,2 +1,3 @@
-# WebScrapping-www.tintenalarm.de
+# Web Scrapping (www.tintenalarm.de)
 Scrapping all the toner supplier and toner prices from the website
+
