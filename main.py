@@ -13,113 +13,160 @@ response = requests.get(url)
 # Parsing the response to HTML using beautiful soup
 soup = BeautifulSoup(response.text, "html.parser")
 
-# Finding all the supplier list
-ink_toner_supplier = soup.find("div", {"id": "droppable1"})
+# Finding all the manufacturer list
+ink_toner_manufacturer = soup.find("div", {"id": "droppable1"})
 
-# Getting all the links of suppliers
-suppliers = ink_toner_supplier.select('a[href]')
+# Getting all the links of manufacturer
+manufacturer = ink_toner_manufacturer.select('a[href]')
 
 # Initializing blank arrays
-supplier_data = []
+manufacturer_data = []
 
 # Initializing Table
-supplier_table = PrettyTable(['SN', 'Brand', 'Title', 'URL'])
+manufacturer_table = PrettyTable(['SN', 'Manufacturer', 'Title', 'URL'])
 
 # Index counter
 index = 1
 
-# Parsing supplier data
-for link in suppliers:
+# Parsing manufacturer data
+for link in manufacturer:
     if (str(link.get('title')) != "") & (str(link.get('title')) != "None"):
         data = str(link.text) + "~" + str(link.get('title')) + "~" + str(link.get('href'))
-        supplier_table.add_row([str(index), str(link.text), str(link.get('title')), str(link.get('href'))])
+        manufacturer_table.add_row([str(index), str(link.text), str(link.get('title')), str(link.get('href'))])
         index = index + 1
-        supplier_data.append(data)
+        manufacturer_data.append(data)
 
-print(supplier_table)
+print(manufacturer_table)
 
-# Set up the supplier URL
-split_data = supplier_data[0].split("~")
-url_supplier = split_data[2]
+# Set up the manufacturer URL
+split_data = manufacturer_data[0].split("~")
+url_manufacturer = split_data[2]
 
-# Getting response from the supplier URL
-response_supplier = requests.get(url_supplier)
+# Getting response from the manufacturer id URL
+response_manufacturer = requests.get(url_manufacturer)
 
 # Parsing the response to HTML using beautiful soup
-soup_supplier = BeautifulSoup(response_supplier.text, "html.parser")
+soup_manufacturer = BeautifulSoup(response_manufacturer.text, "html.parser")
 
-# Finding all the supplier division
-supplier_id_div = soup.find("div", {"class": "m_filterbutton4"})
+# Finding all the manufacturer id
+manufacturer_id_div = soup_manufacturer.find("div", {"class": "m_filterbutton4"})
 
-# Finding all the supplier id
-supplier_id = supplier_id_div.select('option')
+# Finding all the manufacturer id
+manufacturer_id_option = manufacturer_id_div.select('option')
 
 # Initializing blank arrays
-supplier_brand_id = []
+manufacturer_id = []
 
-# Initializing Brand Table
-supplier_brand_id_table = PrettyTable(['SN', 'Brand', 'Brand ID'])
+# Initializing Manufacturer Table
+manufacturer_id_table = PrettyTable(['SN', 'Manufacturer', 'Manufacturer ID'])
 
 # Index counter
 index = 1
 
-for sup_id in supplier_id:
-    if str(sup_id.get('value')) != "":
-        supplier_brand_id_table.add_row([str(index), str(sup_id.text), str(sup_id.get('value'))])
+for man_id in manufacturer_id_option:
+    if str(man_id.get('value')) != "":
+        manufacturer_id_table.add_row([str(index), str(man_id.text), str(man_id.get('value'))])
         index = index + 1
-        data = str(sup_id.text) + "~" + str(sup_id.get('value'))
-        supplier_brand_id.append(data)
+        data = str(man_id.text) + "~" + str(man_id.get('value'))
+        manufacturer_id.append(data)
         if index > 18:
             break
 
-print(supplier_brand_id_table)
+print(manufacturer_id_table)
 
 # Initializing blank arrays
-model_category_id = []
+series_id = []
 
-# Initializing model Category Table
-model_category_table = PrettyTable(['SN', 'Model Category', 'Category ID'])
+# Initializing Series Table
+series_table = PrettyTable(['SN', 'Manufacturer', 'Manufacturer ID', 'Series', 'Series ID'])
 
-# Brand model Category URL
-url_model_category = "https://www.tintenalarm.de/ajax_search_mobile.php"
+# Manufacturer series URL
+url_series = "https://www.tintenalarm.de/ajax_search_mobile.php"
 
 # Index counter
 index = 1
 
-# Brand ID & Request Number with GET request
-for brd_id in supplier_brand_id:
-    # Splitting brand info
+# Manufacturer ID & Request Number with GET request
+for brd_id in manufacturer_id:
+    # Splitting series info
     split_data = brd_id.split("~")
-    brand_name = split_data[0]
-    brand_id = split_data[1]
+    manufacturer_name = split_data[0]
+    manufacturer_id_ex = split_data[1]
     request_id = "1"
-    PARAMS = {'root': brand_id, 'number': request_id}
-    model_category_response = requests.get(url=url_model_category, params=PARAMS)
+    PARAMS = {'root': manufacturer_id_ex, 'number': request_id}
+    series_response = requests.get(url=url_series, params=PARAMS)
 
     # Parsing the response to HTML using beautiful soup
-    soup_model_category = BeautifulSoup(model_category_response.text, "html.parser")
+    soup_series = BeautifulSoup(series_response.text, "html.parser")
 
-    # Finding all the model category
-    model_id_div = soup_model_category.find("div", {"class": "m_filterbutton4"})
+    # Finding all the series
+    series_id_div = soup_series.find("div", {"class": "m_filterbutton4"})
 
-    # Finding all the supplier id
-    model_category = model_id_div.select('option')
+    # Finding all the series id
+    series = series_id_div.select('option')
 
     # model Index counter
     model_index = 1
 
-    for model_cat in model_category:
-        if str(model_cat.get('value')) != "":
-            model_category_table.add_row([str(model_index), str(model_cat.text), str(model_cat.get('value'))])
+    for ser in series:
+        if str(ser.get('value')) != "":
+            series_table.add_row([str(model_index), manufacturer_name, manufacturer_id_ex, str(ser.text), str(ser.get('value'))])
             model_index = model_index + 1
-            data = str(model_cat.get('value'))
-            model_category_id.append(data)
+            data = str(ser.text) + "~" + str(ser.get('value'))
+            series_id.append(data)
 
-    # Initializing Brand Identifier Table
-    model_brand_identity_table = PrettyTable(['SN', 'Brand', 'Brand ID', 'Total Models'])
-    model_brand_identity_table.add_row([str(index), brand_name, brand_id, str(len(model_category_id))])
-
-    print(model_brand_identity_table)
-    print(model_category_table)
-
+    print(series_table)
     break
+
+# Model ID Array
+model_id = []
+
+# Initializing Model Table
+model_table = PrettyTable(['SN', 'Series', 'Series ID', 'Model', 'Model ID'])
+
+# Model URL
+url_series = "https://www.tintenalarm.de/ajax_search_mobile.php"
+
+# Index counter
+index = 1
+
+# Series ID & Request Number with GET request
+for ser_id in series_id:
+    # Splitting series info
+    split_data = ser_id.split("~")
+    series_name = split_data[0]
+    series_id_ex = split_data[1]
+    request_id = "2"
+    PARAMS = {'root': series_id_ex, 'number': request_id}
+    model_response = requests.get(url=url_series, params=PARAMS)
+
+    # Parsing the response to HTML using beautiful soup
+    soup_model = BeautifulSoup(model_response.text, "html.parser")
+
+    # Finding all the series
+    model_id_div = soup_model.find("div", {"class": "m_filterbutton4"})
+
+    # Finding all the series id
+    model = model_id_div.select('option')
+
+    # model Index counter
+    model_index = 1
+
+    for mod in model:
+        if str(mod.get('value')) != "":
+            model_table.add_row([str(model_index), series_name, series_id_ex, str(mod.text), str(mod.get('value'))])
+            model_index = model_index + 1
+            model_id.append(str(mod.get('value')))
+    print(model_table)
+    break
+
+link = manufacturer_id[0].split("~")[1] + "_" + series_id[0].split("~")[1] + "_" + model_id[0]
+link = "https://www.tintenalarm.de/index.php?cPath=" + link
+
+# Getting response from the base URL
+response = requests.get(link)
+
+# Parsing the response to HTML using beautiful soup
+soup = BeautifulSoup(response.text, "html.parser")
+
+print(soup)
