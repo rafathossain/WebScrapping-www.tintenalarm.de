@@ -59,7 +59,6 @@ index = 1
 for data in manufacturer_list:
     split_data = data.split("~")
     manufacturer = split_data[1]
-    print(manufacturer)
     manufacturer_title = split_data[2]
     manufacturer_url = split_data[3]
     for m_id in manufacturer_id_temp:
@@ -76,5 +75,3 @@ for data in manufacturer_list:
             break
 
 manufacturer_list = manufacturer_list_temp
-
-print(manufacturer_list_table)
