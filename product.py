@@ -41,6 +41,7 @@ with open('tintealarm_product_url.csv', mode='w', newline='') as csv_file:
             product_spl = products.split("~")
             csv_writer.writerow(
                 [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id, product_list_url, product_spl[0], product_spl[1]])
+            index = index + 1
             print(array_data)
         else:
             model_options = model_html.select('option')
@@ -60,5 +61,5 @@ with open('tintealarm_product_url.csv', mode='w', newline='') as csv_file:
                     csv_writer.writerow(
                         [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id,
                          product_list_url, product_spl[0], product_spl[1]])
+                    index = index + 1
                     print(array_data)
-        index = index + 1

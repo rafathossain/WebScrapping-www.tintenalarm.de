@@ -15,6 +15,6 @@ def get_product_hook(product_url):
             array_data = products.text + "~" + products.get('href')
             return array_data
     else:
-        return "Invalid URL"
+        return "N/A~N/A"
 
 # get_product_hook("https://www.tintenalarm.de/patronen-c-42184-69349-69438.html")
