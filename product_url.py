@@ -17,4 +17,4 @@ def get_product_hook(product_url):
     else:
         return "N/A~N/A"
 
-# get_product_hook("https://www.tintenalarm.de/patronen-c-42184-69349-69438.html")
+print(get_product_hook("https://www.tintenalarm.de/druckerpatronen-transferrollen-thermotransferrollen-brother-mfc-mfc-1025-patronen-c-44027.html"))

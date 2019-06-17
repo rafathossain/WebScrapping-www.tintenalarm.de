@@ -4,6 +4,7 @@ import series
 import ajax_serach
 import product_url
 import csv
+import url2html
 
 # Initializing model array
 product_list = []
@@ -34,15 +35,33 @@ with open('tintealarm_product_url.csv', mode='w', newline='') as csv_file:
             product_list_url = "https://www.tintenalarm.de/index.php?cPath=" + product_url_postfix
             product_list_url = requests.get(product_list_url).url
             # print(product_list_url)
-            products = product_url.get_product_hook(product_list_url)
-            array_data = str(
-                serial_no) + "~" + manufacturer_name + "~" + manufacturer_id + "~" + series_name + "~" + series_id + "~" + model_name + "~" + model_id + "~" + product_list_url + "~" + products
-            product_list.append(array_data)
-            product_spl = products.split("~")
-            csv_writer.writerow(
-                [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id, product_list_url, product_spl[0], product_spl[1]])
-            index = index + 1
-            print(array_data)
+            # HTML data from the URL
+            product_list_html = url2html.get(product_list_url)
+            # Parse manufacturer information
+            products_div = product_list_html.findAll("div", {"class": "product-listing-text"})
+            array_data = ""
+            if len(products_div) != 0:
+                for data in products_div:
+                    products = data.select('a')[0]
+                    product_title = products.text
+                    product_urls = products.get('href')
+                    array_data = str(
+                        serial_no) + "~" + manufacturer_name + "~" + manufacturer_id + "~" + series_name + "~" + series_id + "~" + model_name + "~" + model_id + "~" + product_list_url + "~" + product_title + "~" + product_urls
+                    product_list.append(array_data)
+                    csv_writer.writerow(
+                        [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id,
+                         product_list_url, product_title, product_urls])
+                    index = index + 1
+                    print(array_data)
+            # else:
+            #     array_data = str(
+            #         serial_no) + "~" + manufacturer_name + "~" + manufacturer_id + "~" + series_name + "~" + series_id + "~" + model_name + "~" + model_id + "~" + product_list_url + "~" + "N/A" + "~" + "N/A"
+            #     product_list.append(array_data)
+            #     csv_writer.writerow(
+            #         [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id, product_list_url,
+            #          product_title, product_urls])
+            #     index = index + 1
+            #     print(array_data)
         else:
             model_options = model_html.select('option')
             for opt in model_options:
@@ -53,13 +72,31 @@ with open('tintealarm_product_url.csv', mode='w', newline='') as csv_file:
                     product_list_url = "https://www.tintenalarm.de/index.php?cPath=" + product_url_postfix
                     product_list_url = requests.get(product_list_url).url
                     # print(product_list_url)
-                    products = product_url.get_product_hook(product_list_url)
-                    array_data = str(
-                        serial_no) + "~" + manufacturer_name + "~" + manufacturer_id + "~" + series_name + "~" + series_id + "~" + model_name + "~" + model_id + "~" + product_list_url + "~" + products
-                    product_list.append(array_data)
-                    product_spl = products.split("~")
-                    csv_writer.writerow(
-                        [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id,
-                         product_list_url, product_spl[0], product_spl[1]])
-                    index = index + 1
-                    print(array_data)
+                    # HTML data from the URL
+                    product_list_html = url2html.get(product_list_url)
+                    # Parse manufacturer information
+                    products_div = product_list_html.findAll("div", {"class": "product-listing-text"})
+                    array_data = ""
+                    if len(products_div) != 0:
+                        for data in products_div:
+                            products = data.select('a')[0]
+                            product_title = products.text
+                            product_urls = products.get('href')
+                            array_data = str(
+                                serial_no) + "~" + manufacturer_name + "~" + manufacturer_id + "~" + series_name + "~" + series_id + "~" + model_name + "~" + model_id + "~" + product_list_url + "~" + product_title + "~" + product_urls
+                            product_list.append(array_data)
+                            csv_writer.writerow(
+                                [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id,
+                                 product_list_url, product_title, product_urls])
+                            index = index + 1
+                            print(array_data)
+                    # else:
+                    #     array_data = str(
+                    #         serial_no) + "~" + manufacturer_name + "~" + manufacturer_id + "~" + series_name + "~" + series_id + "~" + model_name + "~" + model_id + "~" + product_list_url + "~" + "N/A" + "~" + "N/A"
+                    #     product_list.append(array_data)
+                    #     csv_writer.writerow(
+                    #         [manufacturer_name, manufacturer_id, series_name, series_id, model_name, model_id,
+                    #          product_list_url,
+                    #          product_title, product_urls])
+                    #     index = index + 1
+                    #     print(array_data)
